@@ -3,10 +3,8 @@
  * 
  *
  * Copyright 2012, Mizan Syed, With Digital
- * DO NOT REMOVE ANY ATTRIBUTION INFO
- * Dual licensed under the MIT or GPL Version 2 licenses.
- * http://www.opensource.org/licenses/mit-license.php
- * http://www.opensource.org/licenses/GPL-2.0
+ * Licensed under the Apache License, Version 2.0
+ * Read licence.txt and notice.txt for info
  */
 
 
@@ -17,7 +15,7 @@
     {
        useAlt: true,
        dataAttrVar: 'mark',
-       defaultText: false,
+       defaultText: '',
        useExternalStyle: false,
        positionX: 'right', //left 
        positionY: 'bottom', //top
@@ -32,10 +30,10 @@
         padding: '2px'
        }
 
-    }
+    };
 
     //get the settings sorted
-    var settings = $.extend({}, defaults, options);
+    var settings = $.extend(true, {}, defaults, options);
 
     //prefix
     var prefix = "wd_picmark";
@@ -45,12 +43,12 @@
     var add_wrapper = function(el)
     {
       el.wrap("<div style='position:relative'><div class='" + wrapper_class + "'></div></div>");
-    }
+    };
 
     var add_mark = function(el, data) 
     {
       el.after("<span class='" + mark_span_class + "'>" + data + "</data>");
-    }
+    };
 
     var stylise = function(el)
     {
@@ -74,41 +72,42 @@
       obj_mark.css('text-shadow' , settings.font.shadow);
       obj_mark.css('padding' , settings.font.padding);
 
-    }
+    };
     
 
     return this.each(function() {
       var obj = $(this);
       var mark_text = "";
+      obj.bind('load', function(){
+        if (obj.get(0).tagName !== "IMG") return;
 
-      if (obj.get(0).tagName !== "IMG") return;
-
-      if (settings.useAlt === true)
-      {
-        if (obj.get(0).hasAttribute("alt") !== false)
-        { 
-          var mark_text = obj.attr("alt"); //use this is alt is set
+        if (settings.useAlt === true)
+        {
+          if (obj.get(0).hasAttribute("alt") !== false)
+          { 
+            mark_text = obj.attr("alt"); //use this is alt is set
+          }
+        } 
+        else
+        {
+          //use this if data attribute is set
+          mark_text = obj.data(settings.dataAttrVar);
         }
-      } 
-      else
-      {
-        //use this if data attribute is set
-        var mark_text = obj.data(dataAttrVar);
-      }
 
-      //if the default is set and no alt is set
-      if (mark_text == "" && defaultText !== false)
-      {
-        mark_text == defaultText;
-      }
+        //if the default is set and no alt is set
+        if (mark_text == "" && settings.defaultText !== "")
+        {
+          mark_text = settings.defaultText;
+        }
 
-      //nothing is available ...
-      if (mark_text == "") return;
+        //nothing is available ...
+        if (mark_text == "") return;
 
-      add_wrapper(obj);
-      add_mark(obj, mark_text);
+        add_wrapper(obj);
+        add_mark(obj, mark_text);
 
-      if (!settings.useExternalStyle) stylise(obj);
+        if (!settings.useExternalStyle) stylise(obj);
+      });
     });
 
   }
