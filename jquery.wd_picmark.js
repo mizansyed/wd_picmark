@@ -47,7 +47,7 @@
 
     var add_mark = function(el, data) 
     {
-      el.after("<span class='" + mark_span_class + "'>" + data + "</data>");
+      el.after("<span class='" + mark_span_class + "'>" + data + "</span>");
     };
 
     var stylise = function(el)
